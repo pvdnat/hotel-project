@@ -4,8 +4,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 //#include <signal.h>
+#include <unistd.h>
 //#include <unistd.h>
-//#include <unistd.h>
+#include <ctype.h>
+
 
 #define WISH_MAX_INPUT 80 // really modest :)
 #define WISH_DEFAULT_PROMPT "> "

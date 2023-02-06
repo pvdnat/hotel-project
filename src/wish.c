@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+//#include <signal.h>
+#include <unistd.h>
+#include <ctype.h>
 #include "wish.h"
 
 int main(int argc, char *argv[])
