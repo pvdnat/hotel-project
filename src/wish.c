@@ -11,29 +11,24 @@ int main(int argc, char *argv[]) {
     argc = 0;
     argv = NULL;
 
-    // This is just a skeleton for your convenience
-    //wish_read_line(stdin);
-    //wish_read_config("wish.config", 1);
+    char *dir = getenv("USERPROFILE");          // Get the USER directory for testing 
+    char *file_name;                            //since my getenv("HOME") return NULL
+    strcat(dir,"\\hotel-project\\src\\");       // Where the testing text file at
 
-
-    printf("%s", WISH_DEFAULT_PROMPT);
-
-    if (wish_read_line(stdin)!=NULL) {
-        printf("%s\n", "Success!!!");
-        return EXIT_SUCCESS;
-    } else {
-        printf("%s\n", "Fail!!!");
-        return EXIT_FAILURE;
-    }
+    printf("%s%s", WISH_DEFAULT_PROMPT, "wish: enter the file name: ");
+    file_name = wish_read_line(stdin);
+    printf("%s%s\n\n", WISH_DEFAULT_PROMPT, "wish: reading file...");
     
-    /*
-    if (wish_read_config("text.txt", 1)==0) {
-        printf("%s\n", "Success!!!");
+    if (file_name != NULL) {
+        strcat(dir, file_name);
+        printf("%s%s\n\n", WISH_DEFAULT_PROMPT, "wish: the file contains lines...");
+        
+        if (wish_read_config(dir, 1)==0) {
+        printf("\n%s%s\n", WISH_DEFAULT_PROMPT, "wish: successfully read the file!!!");
         return EXIT_SUCCESS;
     } else {
-        printf("%s\n", "Fail!!!");
+        printf("\n%s%s\n", WISH_DEFAULT_PROMPT, "wish: failed to read file!!!");
         return EXIT_FAILURE;
+        }
     }
-    */
-
 }

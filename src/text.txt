@@ -1,0 +1,16 @@
+
+
+1: This a line
+2: this testing for...
+
+
+3: 3rd line testt 
+this is a very long line that contains more than 80 characters to test if wish discard
+
+this line contains exactly 80 characters to test if wish read /discard the line
+
+this is even a longer line that contains more than 160 characters which is used to test if wish discrad the whole line until the end of line, some random characters for testing wish shell, etc...
+
+
+hotel-project
+

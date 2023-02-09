@@ -7,64 +7,44 @@
 
 
 char *wish_read_line(FILE *in) {
-    // Define buffer length and buffer counter 
-    int buffer_length = 2048, count = 0;
+    // Define buffer and its length
+    int buffer_length = WISH_MAX_INPUT +2;          // Space for \n and \0 characters
     char *buffer = (char *)malloc(sizeof(char) * buffer_length);
-    if (buffer==NULL) {
-        perror("wish error: fail to allocate buffer memory");
+    if (buffer == NULL) {
+        perror("wish: fail to allocate buffer memory");
         return NULL;
     }
 
-    // Define string pointer */
-    char str[WISH_MAX_INPUT];
-
-    // Get the first line from the file and check if line exist 
-    while (fgets(str, WISH_MAX_INPUT, in) != NULL) {
-
-        // Check if buffer has enough memory and reallocate if needed 
-        if (count == buffer_length) {
-            buffer_length *= 2;
-            buffer = realloc(buffer, buffer_length);
-            if (buffer == NULL) {
-                perror("wish error: fail to reallocate buffer memory");
+    // Get the line and check with condition
+    if (fgets(buffer, buffer_length, in) != NULL) {
+        if (!isspace((int)*buffer)) {                       // Check if line is empty
+            if (strchr(buffer, '\n') == NULL) {             // Check if reach end of line
+                while (strchr(buffer, '\n') == NULL) {      // Discard the whole line if longer    
+                    fgets(buffer, buffer_length, in);       //than max length 
+                }
+                fprintf(stderr, "%s\n", "wish: line too long");
                 return NULL;
             }
-        }
-
-
-        // Check if end of line 
-        if (strchr(str, '\n') != NULL) {
-            if (!isspace((int)*str)) {            // Check if line is include empty 
-                str[strcspn(str, "\n")] = 0;         // Remove newline character
-                strcpy((buffer+count), str);
-                count++;
-            } else {
-                return NULL;
-            }
-
-        // Discard the whole line that longer than max input 
-        } else {
-            while (strchr(str, '\n') == NULL) {   // Keep discarding until end of line 
-                fgets(str, WISH_MAX_INPUT, in);
-            }
-            fprintf(stderr, "%s", "wish error: line too long\n");
-            return NULL;
+            buffer[strcspn(buffer, "\n")] = 0;              // Remove newline character
+            return buffer;
         }
     }
-    return buffer;
+    return NULL;
 }
 
 int wish_read_config(char *fname, int ok_if_missing) {
-    // Check if file exist and read it 
     FILE *f;
     f = fopen(fname, "r");
+
+    // Check if file exist and read it
     if (f == NULL && ok_if_missing != 1) {
         perror("wish error: file not exists");
         return 1;
     } else if (f!=NULL) {
-        if (wish_read_line(f) != NULL) {
-            return 0;
+        while (!feof(f)) {
+            printf("%s\n", wish_read_line(f));              // Temporary print line that read
         }
+        return 0;
     }
     fclose(f);
     return 1;
