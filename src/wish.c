@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
 
     char *file_name;                            
     printf("%s%s", WISH_DEFAULT_PROMPT, "wish: enter the file name: ");
-    wish_read_line(stdin);
+    file_name = wish_read_line(stdin);
 
     if (file_name != NULL) {
         //printf("%s%s\n\n", WISH_DEFAULT_PROMPT, "wish: the file contains lines...");
