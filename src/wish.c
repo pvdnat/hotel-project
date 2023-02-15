@@ -1,30 +1,26 @@
-#include <stdio.h>
-#include <stdlib.h>
-//#include <signal.h>
-#include <unistd.h>
-#include <ctype.h>
+#include <limits.h>
 #include "wish.h"
 
-int main(int argc, char *argv[]) {
-    // These two lines make the macOS C compiler happy.
-    // Otherwise, it complains about unused parameters.
-    argc = 0;
-    argv = NULL;
+int main(int argc, char *argv[])
+{
+  // These two lines make the macOS C compiler happy.
+  // Otherwise, it complains about unused parameters.
+  (void)argc;
+  (void)argv;
 
-    char *file_name;                            
-    printf("%s%s", WISH_DEFAULT_PROMPT, "wish: enter the file name: ");
-    file_name = wish_read_line(stdin);
-
-    if (file_name != NULL) {
-        //printf("%s%s\n\n", WISH_DEFAULT_PROMPT, "wish: the file contains lines...");
-        if (wish_read_config(file_name, 1)==0) {
-            printf("%s%s\n\n", WISH_DEFAULT_PROMPT, "wish: reading file...");
-            printf("\n%s%s\n", WISH_DEFAULT_PROMPT, "wish: successfully read the file!!!");
-            return EXIT_SUCCESS;
-        } else {
-            printf("\n%s%s\n", WISH_DEFAULT_PROMPT, "wish: file not exists!");
-            return EXIT_FAILURE;
-        }
-    } 
-    
+  char path[PATH_MAX];
+  char *home = getenv("HOME");
+#ifdef DEBUG
+  home = "."; // So that you could place the config into the CWD
+#endif
+  sprintf(path, "%s/%s", (home ? home : "."), WISH_CONFIG);
+  wish_read_config(path, 1);
+  
+  // This is just a skeleton for your convenience
+  fputs(WISH_DEFAULT_PROMPT, stdout);
+  char *line = wish_read_line(stdin);
+  if(line)
+    free(line);
+  
+  return EXIT_SUCCESS;
 }
