@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include "wish.h"
+#include <string.h>
 
 // https://en.wikipedia.org/wiki/Escape_sequences_in_C#Table_of_escape_sequences
 char *wish_unquote(char * s) {
-  char *buffer[WISH_MAX_INPUT+1];
+  char buffer[WISH_MAX_INPUT+1];
 
   int ch = 0, pos = 0;
 
@@ -68,11 +69,11 @@ char *wish_unquote(char * s) {
       }
       ch++;
     }
-    buffer[pos] = line[ch];
+    buffer[pos] = s[ch];
     ch++;
     pos++;
 
-  } while ( ch < strlen(s)+1 )
+  } while ( (unsigned)ch < strlen(s)+1 );
 
   //get new line
   char *line = malloc(strlen(buffer) + 1);
