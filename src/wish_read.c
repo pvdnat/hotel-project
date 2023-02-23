@@ -29,7 +29,7 @@ char *wish_read_line(FILE *in) {
       char *line = malloc(strlen(buffer) + 1);
       if (!line) // Too bad
 	abort();
-      strcat(line, buffer);
+      strcpy(line, buffer);
       return line;
     }
   }
