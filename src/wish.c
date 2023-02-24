@@ -1,6 +1,8 @@
 #include <limits.h>
 #include "wish.h"
 
+int wish_exit;
+
 int main(int argc, char *argv[])
 {
   // These two lines make the macOS C compiler happy.
@@ -17,10 +19,14 @@ int main(int argc, char *argv[])
   wish_read_config(path, 1);
   
   // This is just a skeleton for your convenience
-  fputs(WISH_DEFAULT_PROMPT, stdout);
-  char *line = wish_read_line(stdin);
-  if(line)
-    free(line);
+  wish_exit=0;
+  while (wish_exit==0) {
+    fputs(WISH_DEFAULT_PROMPT, stdout);
+    char *line = wish_read_line(stdin);
+    wish_parse_command();
+    if(line)
+      free(line);
+  }
   
   return EXIT_SUCCESS;
 }

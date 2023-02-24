@@ -1,5 +1,6 @@
  %{
 #include "wish.h"
+#include "string.h"
   int yylex();
   void yyerror(const char* s);
 %}
@@ -32,7 +33,7 @@ cmdline:
 | arg YY_SET arg 
 | YY_PWD          
 | YY_CD arg      
-| YY_EXIT        { /* ... */ }
+| YY_EXIT        {  }
 
 pipe: 
   YY_BAR out_prog  

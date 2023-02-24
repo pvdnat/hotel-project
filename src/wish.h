@@ -10,7 +10,11 @@
 #define WISH_DEFAULT_PROMPT "> "
 #define WISH_CONFIG "wish.conf"
 
+
+
 char *wish_read_line(FILE *in);
 int wish_read_config(char *fname, int ok_if_missing);
+
+extern int wish_exit;
 
 #endif

@@ -4,6 +4,7 @@
 
 #include "wish.h"
 
+
 char *wish_read_line(FILE *in) {
   char buffer[WISH_MAX_INPUT + 2] = ""; // truncate the buffer
 
@@ -52,7 +53,9 @@ int wish_read_config(char *fname, int ok_if_missing) {
   // Read the file line by line
   while(!feof(config)) {
     char *line = wish_read_line(config);
+
     if(line) {
+      wish_parse_command(line);
 #ifdef DEBUG
       fprintf(stderr, "%s\n", line); // Only for debugging
 #endif

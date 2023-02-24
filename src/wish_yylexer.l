@@ -10,6 +10,7 @@ char *wish_safe_getenv(char *s);
 char *wish_unquote(char *s);
 %}
 
+
 %option noyywrap
 
 digit         [0-9]
