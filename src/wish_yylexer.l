@@ -7,9 +7,7 @@ extern int yyparse(void);
 #endif
 
 char *wish_safe_getenv(char *s);
-char *wish_unquote(char *s);
 %}
-
 
 %option noyywrap
 
@@ -32,10 +30,10 @@ cd              { return YY_CD;   }
                   return YY_TOK; }
 {permitted}+    { yylval.s = strdup(wish_unquote(yytext));
                   return YY_TOK; }
-{quoted_string} { yytext[strlen(yytext) - 1] = 0;
+{quoted_string} { yytext[yyleng - 1] = 0;
                   yylval.s = strdup(yytext + 1);
                   return YY_TOK; }
-{string}        { yytext[strlen(yytext) - 1] = 0;
+{string}        { yytext[yyleng - 1] = 0;
                   yylval.s = strdup(wish_unquote(yytext + 1));
                   return YY_TOK; }
 

@@ -1,6 +1,5 @@
 BIN = ./wish
-OBJS = wish.o wish_read.o wish_parse.o \
-	wish_yyparser.tab.o lex.yy.o
+OBJS = wish_yyparser.tab.o lex.yy.o wish.o wish_read.o wish_parse.o
 
 CFLAGS = -Wall -pedantic -Wextra -Wcast-align -Wcast-qual \
 	-Wdisabled-optimization -Wformat=2 -Winit-self \
