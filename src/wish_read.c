@@ -1,8 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-//#include <signal.h>
-#include <unistd.h>
-#include <ctype.h>
+//#include <stdio.h> // DZ: !!!
+//#include <stdlib.h> // DZ: !!!
+//#include <signal.h> // DZ: !!!
+#include <string.h> // DZ: !!!
+//#include <unistd.h> // DZ: !!!
+//#include <ctype.h> // DZ: !!!
 #include "wish.h"
 
 // Check if line is empty
@@ -18,6 +19,7 @@ int isempty(char *buffer) {
 char *wish_read_line(FILE *in) {
     // Define buffer and its length
     int buffer_length = WISH_MAX_INPUT +2;          // Space for newline and endline characters
+    // DZ: char buffer[buffer_length];
     char *buffer = (char *)malloc(sizeof(char) * buffer_length);
     if (buffer == NULL) {
         perror("wish: fail to allocate buffer memory");
@@ -47,10 +49,12 @@ int wish_read_config(char *fname, int ok_if_missing) {
 
     // Check if file exist and read it
     if (f == NULL && ok_if_missing != 1) {
+      // DZ: perror(fname)
         perror("wish error: file not exists");
         return 1;
     } else if (f!=NULL) {
         while (!feof(f)) {
+      // DZ: Clean "trash code" before submitting
             //printf("%s\n", wish_read_line(f));              // Temporary print line that read
             wish_read_line(f);
         }
