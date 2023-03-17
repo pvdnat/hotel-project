@@ -23,6 +23,8 @@ int main(int argc, char *argv[])
   while (wish_exit==0) {
     fputs(WISH_DEFAULT_PROMPT, stdout);
     char *line = wish_read_line(stdin);
+    // DZ: Wrong number of parameters
+    // DZ: "Pass the value returned by wish_read_line() to wish_parse_command()."
     wish_parse_command();
     if(line)
       free(line);

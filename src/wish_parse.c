@@ -75,6 +75,8 @@ char *wish_unquote(char * s) {
 
   } while ( (unsigned)ch < strlen(s)+1 );
 
+  // DZ: You could modify the original line
+  // DZ: Since you did not, you must free it to avoid mem leak
   //get new line
   char *line = malloc(strlen(buffer) + 1);
   strcpy(line, buffer);

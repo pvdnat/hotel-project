@@ -33,8 +33,10 @@ cmdline:
 | arg YY_SET arg 
 | YY_PWD          
 | YY_CD arg      
-| YY_EXIT        { char *line = wish_read_line(stdin);
-if (strcmp(line, "exit")) wish_exit =1; }
+| YY_EXIT        {
+  // DZ: "add an action that changes the value of wish_exit" /
+  /*char *line = wish_read_line(stdin);
+    if (strcmp(line, "exit")) */wish_exit =1; }
 
 pipe: 
   YY_BAR out_prog  

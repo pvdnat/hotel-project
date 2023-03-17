@@ -14,6 +14,8 @@
 
 char *wish_read_line(FILE *in);
 int wish_read_config(char *fname, int ok_if_missing);
+// DZ: Must jave been included
+int wish_parse_command(char *command);
 
 extern int wish_exit;
 
