@@ -1,5 +1,7 @@
 #include <limits.h>
 #include "wish.h"
+#include <signal.h>
+#include<string.h>
 
 int wish_exit = 0;
 
@@ -9,7 +11,13 @@ static void refuse_to_die(int sig)
 }
 
 static void prevent_interruption() {
-  fputs("SYSTEM GHOST: Hi, I am `prevent_interruption()`.\nSYSTEM GHOST: When I am implemented, I will install a signal handler,\nSYSTEM GHOST: and you won't be able to use Ctrl+C anymore :P\n", stderr);
+  fputs("SYSTEM GHOST: Hi, I am `prevent_interruption()`.\nSYSTEM GHOST: When I am implemented, I will install a signal handler,\nSYSTEM GHOST: and you won't be able to use Ctrl+C anymore :P\n", stderr);  
+  struct sigaction sig;
+  sig.sa_handler = refuse_to_die;
+  if (sigaction(SIGINT, &sig, NULL) == -1) {
+    perror("SIGACTION");
+  }
+
 }
 
 int main(int argc, char *argv[])
@@ -42,22 +50,31 @@ int main(int argc, char *argv[])
 
 char *super_strdup(const char *s) {
   // Must be implemented
-  fputs("\nSYSTEM GHOST: did you just call unimplemented `super_strdup`?\n",
-	stderr);
-  return NULL;
+  // fputs("\nSYSTEM GHOST: did you just call unimplemented `super_strdup`?\n", stderr);
+  char* target = strdup(s);
+  if (!target) {
+    abort();
+  }
+  return target;
 }
 
 void *super_malloc(size_t size) {
   // Must be implemented
-  fputs("\nSYSTEM GHOST: did you just call unimplemented `super_malloc`?\n",
-	stderr);
-  return NULL;
+  // fputs("\nSYSTEM GHOST: did you just call unimplemented `super_malloc`?\n", stderr);
+  char *mal = malloc(size);
+  if (!mal) {
+    abort();
+  }
+  return mal;
 }
 
 void *super_realloc(void *ptr, size_t size) {
   // Must be implemented
-    fputs("\nSYSTEM GHOST: did you just call unimplemented `realloc`?\n",
-	  stderr);
-    return NULL;
+  // fputs("\nSYSTEM GHOST: did you just call unimplemented `realloc`?\n", stderr);
+  ptr = realloc(ptr, size);
+  if (!ptr) {
+    abort();
+  }
+  return ptr;
 }
 

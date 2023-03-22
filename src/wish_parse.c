@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include "wish.h"
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <stdlib.h>
+
 
 // https://en.wikipedia.org/wiki/Escape_sequences_in_C#Table_of_escape_sequences
 char *wish_unquote(char * s) {
@@ -48,7 +53,7 @@ prog_t *last_exe(prog_t *exe) {
 arglist_t add_to_arglist(arglist_t al, char *arg)
 {
   al.size++;      // Increase argument array size
-  al.args = realloc(al.args, sizeof(char*) * al.size); // Add storage
+  al.args = super_realloc(al.args, sizeof(char*) * al.size); // Add storage
   al.args[al.size - 1] = arg;  // Add the last element
   return al;
 }
@@ -56,7 +61,7 @@ arglist_t add_to_arglist(arglist_t al, char *arg)
 arglist_t create_arglist(char *arg)
 {
   arglist_t al;
-  al.args = malloc(sizeof(char*)); // New argument array
+  al.args = super_malloc(sizeof(char*)); // New argument array
   al.args[0] = arg; // Its first element
   al.size = 1;
   return al;
@@ -64,7 +69,7 @@ arglist_t create_arglist(char *arg)
 
 prog_t *create_program(arglist_t al)
 {
-  prog_t *p = malloc(sizeof(prog_t));
+  prog_t *p = super_malloc(sizeof(prog_t));
   p->args = al;
   p->redirection.in = p->redirection.out1 = p->redirection.out2 = NULL;
   p->prev = NULL;
@@ -103,6 +108,10 @@ int spawn(prog_t *exe, int bgmode /* Disregard! */)
     5. Report any errors with perror() and return 1 in the parent if
     there was an error or 0, otherwise.
   */
+
+  
+
+  
   return status;
 }
 
