@@ -11,7 +11,7 @@ static void refuse_to_die(int sig)
 }
 
 static void prevent_interruption() {
-  fputs("SYSTEM GHOST: Hi, I am `prevent_interruption()`.\nSYSTEM GHOST: When I am implemented, I will install a signal handler,\nSYSTEM GHOST: and you won't be able to use Ctrl+C anymore :P\n", stderr);  
+  //fputs("SYSTEM GHOST: Hi, I am `prevent_interruption()`.\nSYSTEM GHOST: When I am implemented, I will install a signal handler,\nSYSTEM GHOST: and you won't be able to use Ctrl+C anymore :P\n", stderr);  
   struct sigaction sig;
   sig.sa_handler = refuse_to_die;
   if (sigaction(SIGINT, &sig, NULL) == -1) {
@@ -29,9 +29,11 @@ int main(int argc, char *argv[])
 
   char path[PATH_MAX];
   char *home = getenv("HOME");
+
 #ifdef DEBUG
   home = "."; // So that you could place the config into the CWD
 #endif
+
   sprintf(path, "%s/%s", (home ? home : "."), WISH_CONFIG);
   wish_read_config(path, 1);
   
@@ -43,6 +45,7 @@ int main(int argc, char *argv[])
       wish_parse_command(line);
       free(line);
     }
+
   }
   
   return EXIT_SUCCESS;

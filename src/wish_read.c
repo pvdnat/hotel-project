@@ -51,11 +51,14 @@ int wish_read_config(char *fname, int ok_if_missing) {
   while(!feof(config)) {
     char *line = wish_read_line(config);
     if(line) {
+/*
 #ifdef DEBUG
       fprintf(stderr, "DEBUG: %s\n", line); // Only for debugging
 #endif
+*/
       wish_parse_command(line);
       free(line);
+
     }
   }
 

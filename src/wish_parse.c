@@ -4,7 +4,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 // https://en.wikipedia.org/wiki/Escape_sequences_in_C#Table_of_escape_sequences
 char *wish_unquote(char * s) {
@@ -86,8 +86,7 @@ int spawn(prog_t *exe, int bgmode /* Disregard! */)
   */
   
   int status = 0;
-  fputs("\nSYSTEM GHOST: Hi, I am `spawn()`.\nSYSTEM GHOST: I am the workhorse of the shell, implement me ASAP!\n",
-	stderr);
+  //fputs("\nSYSTEM GHOST: Hi, I am `spawn()`.\nSYSTEM GHOST: I am the workhorse of the shell, implement me ASAP!\n",stderr);
   /*
     1. Fork a child process.
 
@@ -108,16 +107,37 @@ int spawn(prog_t *exe, int bgmode /* Disregard! */)
     5. Report any errors with perror() and return 1 in the parent if
     there was an error or 0, otherwise.
   */
+  pid_t pid = fork();
+  if (pid != 0) {
+    if (pid==-1) {
+      perror("fork");
+      status=1;
+    }
 
-  
+    if(wait(0)==-1) {
+      perror("waitpid");
+      status=1;
+    }
 
-  
+    prog_t *pipe = NULL;
+    free_memory(exe, pipe);
+
+  } else {
+    int size = exe->args.size;
+    exe->args.args = super_realloc(exe->args.args, sizeof(char*)*size+1);
+    exe->args.args[size] = NULL;
+
+    if (execvp (exe->args.args[0], exe->args.args) == -1) {
+      perror ("execvp");
+      _exit(EXIT_FAILURE);
+    }
+  }
+
   return status;
 }
 
 void free_memory(prog_t *exe, prog_t *pipe)
 {
-  fputs("\nSYSTEM GHOST: I am a skeleton, just call me where necessary\n",
-	stderr);
+  //fputs("\nSYSTEM GHOST: I am a skeleton, just call me where necessary\n", stderr);
 }
 
