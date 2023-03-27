@@ -36,7 +36,7 @@ cmdline:
 %empty                 { /* an empty line is valid, too! Do nothing */ }
 | redir_exe bg_mode    { spawn($1, $2); }
 | in_exe pipe bg_mode  { last_exe($2)->prev = $1; spawn($2, $3);}
-| YY_TOK YY_SET YY_TOK   /* TODO */
+| YY_TOK YY_SET YY_TOK { wish_assign($1, $3); }
 | YY_PWD                 /* TODO */
 | YY_JOBS                /* TODO */
 | YY_CD YY_TOK           /* TODO */

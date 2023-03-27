@@ -8,7 +8,7 @@ char *wish_read_line(FILE *in) {
   char buffer[WISH_MAX_INPUT + 2] = ""; // truncate the buffer
 
   // Get a string and check its length
-  fgets(buffer, WISH_MAX_INPUT + 2, in);
+  if (!fgets(buffer, WISH_MAX_INPUT + 2, in)) return NULL;
   if(strlen(buffer) > WISH_MAX_INPUT) {
     fputs("wish: line too long\n", stderr);
 
@@ -20,17 +20,12 @@ char *wish_read_line(FILE *in) {
   }
 
   // Trim the line
-  strtok(buffer, "\n");
-
+  buffer[strcspn(buffer, "\n")] = '\0';
+  
   // Check the line for being blank
-  for(size_t i = 0; i < strlen(buffer); ++i) {
-    if(!isspace(buffer[i])) {
-      // Allocate memory
-      char *line = super_malloc(strlen(buffer) + 1);
-      strcpy(line, buffer);
-      return line;
-    }
-  }
+  for(size_t i = 0; i < strlen(buffer); ++i)
+    if(!isspace(buffer[i]))
+      return strdup(buffer);
 
   return NULL;
 }
@@ -49,16 +44,13 @@ int wish_read_config(char *fname, int ok_if_missing) {
 
   // Read the file line by line
   while(!feof(config)) {
-    char *line = wish_read_line(config);
+    char *line = wish_read_line(config);    
     if(line) {
-/*
 #ifdef DEBUG
       fprintf(stderr, "DEBUG: %s\n", line); // Only for debugging
 #endif
-*/
       wish_parse_command(line);
       free(line);
-
     }
   }
 

@@ -26,15 +26,15 @@ exit            { return YY_EXIT; }
 pwd             { return YY_PWD;  }
 cd              { return YY_CD;   }
 
-\${alnum}+      { yylval.s = strdup(wish_safe_getenv(yytext + 1));
+\${alnum}+      { yylval.s = super_strdup(wish_safe_getenv(yytext + 1));
                   return YY_TOK; }
-{permitted}+    { yylval.s = strdup(wish_unquote(yytext));
+{permitted}+    { yylval.s = super_strdup(yytext);
                   return YY_TOK; }
 {quoted_string} { yytext[yyleng - 1] = 0;
-                  yylval.s = strdup(yytext + 1);
+                  yylval.s = super_strdup(yytext + 1);
                   return YY_TOK; }
 {string}        { yytext[yyleng - 1] = 0;
-                  yylval.s = strdup(wish_unquote(yytext + 1));
+                  yylval.s = super_strdup(wish_unquote(yytext + 1));
                   return YY_TOK; }
 
 "<"             { return YY_LESS;     }
