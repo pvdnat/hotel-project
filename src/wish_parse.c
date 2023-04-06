@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include "wish.h"
-
+#include <string.h>
 // https://en.wikipedia.org/wiki/Escape_sequences_in_C#Table_of_escape_sequences
 char *wish_unquote(char * s) {
   int i, j;
@@ -38,7 +38,11 @@ void yyerror(const char* s) {
 }
 
 char *wish_safe_getenv(char *name) {
-  return NULL;
+  char* env = getenv(name);
+  if (!env) {
+    env = super_strdup("");
+  }
+  return env;
 }
 
 void wish_assign(char *name, char *value) {
@@ -48,6 +52,15 @@ void wish_assign(char *name, char *value) {
    * or -1 on error, with errno set to indicate the cause of the error.
    */
 
+  //char* env = wish_safe_getenv(name);
+  if (strcmp(wish_safe_getenv(name),"")==0) {
+    setenv(name, value, 0);
+  } else {
+    setenv(name, value, 1);
+  }
+
+  if (name) free(name);
+  if (value) free(value);
 }
 
 // Find the first program on the command line
@@ -85,6 +98,19 @@ prog_t *create_program(arglist_t al)
 
 int handle_child(pid_t pid, int bgmode)
 {
+  int status;
+  char str[10];
+  if (bgmode==0) {
+    if (waitpid(pid, &status,0)==-1) {
+      perror("waitpid");
+      return 1;
+    }
+
+    if (WEXITSTATUS(status)) {
+      sprintf(str, "%d", WEXITSTATUS(status));
+      setenv("_",str,0);
+    }
+  }
   return 0;
 }
 
