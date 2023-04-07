@@ -105,11 +105,8 @@ int handle_child(pid_t pid, int bgmode)
       perror("waitpid");
       return 1;
     }
-
-    if (WEXITSTATUS(status)) {
-      sprintf(str, "%d", WEXITSTATUS(status));
-      setenv("_",str,0);
-    }
+    sprintf(str, "%d", WEXITSTATUS(status));
+    setenv("_",str,1);
   }
   return 0;
 }
