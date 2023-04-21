@@ -128,6 +128,16 @@ static void start(prog_t *exe) {
   perror(args.args[0]);
 }
 
+// Find the number of programs on the command line
+static size_t cmd_length(prog_t *exe) {
+  int count = 0;
+  while(exe) {
+    exe = exe->prev;
+    count++;
+  }
+  return count;
+}
+
 int spawn(prog_t *exe, int bgmode)
 {
   /*
@@ -142,30 +152,87 @@ int spawn(prog_t *exe, int bgmode)
     } arglist_t;    
   */
 
-  pid_t pid;
-  switch(pid = fork()) {
-  case -1:
+
+  size_t i, size = cmd_length(exe);
+
+  int fd[size][2], in = 0;
+  pid_t pid[size];
+  
+  
+  //first child
+  if (pipe(fd[0]) == -1) {
+    perror("pipe");
+    return 1;
+  }
+
+  pid[0] = fork();
+  if (pid[0] < 0) {
     perror("fork");
     return 1;
-    
-  case 0: // Child
-    start(exe);
-    _exit(EXIT_FAILURE); // Do NOT use exit()!
-    
-  default: // Parent
-    return handle_child(pid, bgmode);
   }
+
+  if (pid[0] == 0) {
+    dup_me(fd[0][1], STDOUT_FILENO);
+    close(fd[0][0]);
+    close(fd[0][1]);
+    start(last_exe(exe));
+    _exit(EXIT_FAILURE);     
+  }
+  
+
+  //2nd child
+  prog_t *process=exe;
+  for (i=1; i<=size;i++) {
+    if (pipe(fd[i]) == -1) {
+      perror("pipe");
+      return 1;
+    }
+
+    pid[i] = fork();
+    if (pid[i] < 0) {
+      perror("fork");
+      return 1;
+    }
+
+    if (i==size) {
+      //Last process so read only
+      if (pid[i] == 0) {
+        dup_me(fd[i-1][0], STDIN_FILENO);
+        close(fd[i-1][0]);
+        close(fd[i-1][1]);
+        start(process);
+        _exit(EXIT_FAILURE);    
+      }
+      close(fd[i-1][0]);
+      close(fd[i-1][1]);
+    } else {
+      //Keep read prev pipe and write to current pipe
+      if (pid[i] == 0) {
+        dup_me(fd[i-1][0], STDIN_FILENO);
+        dup_me(fd[i][1], STDOUT_FILENO);
+        close(fd[i-1][0]);
+        close(fd[i-1][1]);
+        close(fd[i][0]);
+        close(fd[i][1]);
+        for (size_t j=size; j>i; j--) {
+          process=exe->prev;
+        }
+        start(process);
+        _exit(EXIT_FAILURE);
+      }
+
+      close(fd[i-1][0]);
+      close(fd[i-1][1]);
+    }
+  }
+
+  handle_child(pid[0],bgmode);
+  handle_child(pid[i-1],bgmode);
+
+  return 0;
 }
 
-// Find the number of programs on the command line
-static size_t cmd_length(prog_t *exe) {
-  int count = 0;
-  while(exe) {
-    exe = exe->prev;
-    count++;
-  }
-  return count;
-}
+
 
 void free_memory(prog_t *exe)
 {
@@ -178,6 +245,7 @@ void free_memory(prog_t *exe)
     free(exe->redirection.out1);
   if(exe->redirection.out2)
     free(exe->redirection.out2);
-  free (exe);
+  if (exe) 
+    free (exe);
 }
 

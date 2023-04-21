@@ -1,6 +1,8 @@
 #include <limits.h>
 #include <signal.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include "wish.h"
 
 int wish_exit = 0;
@@ -23,7 +25,10 @@ int main(int argc, char *argv[])
   // Otherwise, it complains about unused parameters.
   (void)argc;
   (void)argv;
-
+  
+  setenv("SHELL", argv[0], 1);
+  setenv("PS1", WISH_DEFAULT_PROMPT, 1);
+  
   char path[PATH_MAX];
   char *home = getenv("HOME");
 #ifdef DEBUG
@@ -32,6 +37,12 @@ int main(int argc, char *argv[])
   sprintf(path, "%s/%s", (home ? home : "."), WISH_CONFIG);
   wish_read_config(path, 1);
   
+  for (int i=1; i<argc; i++) {
+    if (wish_read_config(argv[i], 0)) {
+      exit(1);
+    }
+  }
+
   prevent_interruption();
   while(!wish_exit) {
     fputs(WISH_DEFAULT_PROMPT, stdout);
